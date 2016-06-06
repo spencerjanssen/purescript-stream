@@ -1,0 +1,23 @@
+{
+  "name": "purescript-stream",
+  "version": "1.0.0",
+  "moduleType": [
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-console": "^0.1.0",
+    "purescript-exists": "^0.2.0",
+    "purescript-prelude": "^0.1.5",
+    "purescript-unsafe-coerce": "^0.1.1",
+    "purescript-arrays": "^0.4.5",
+    "purescript-quickcheck": "^0.12.2",
+    "purescript-test-unit": "^6.0.1",
+    "purescript-maps": "^0.5.7"
+  }
+}
