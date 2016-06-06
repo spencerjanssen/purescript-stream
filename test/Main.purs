@@ -2,12 +2,15 @@ module Test.Main where
 
 import Prelude
 import Data.Stream.Operations as StreamOp
+import Data.Stream.StrMap as SM
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE)
 import Control.Monad.Eff.Random (RANDOM)
 import Data.Array (filter)
+import Data.StrMap (fromFoldable, StrMap)
 import Data.Stream (Stream)
 import Data.Stream.Array (stream, unstream)
+import Data.Tuple (Tuple)
 import Test.QuickCheck (Result, (===))
 import Test.Unit (test)
 import Test.Unit.Console (TESTOUTPUT)
@@ -24,6 +27,14 @@ arrayModel f g = fnEqual f (unstream <<< g <<< stream)
 unstreamStream :: Array Int -> Result
 unstreamStream = fnEqual id (unstream <<< stream)
 
+arrayToStrMap :: Array (Tuple String Int)-> StrMap Int
+arrayToStrMap = fromFoldable
+
+unstreamStreamStrMap :: Array (Tuple String Int)-> Result
+unstreamStreamStrMap arr =
+    let sm = arrayToStrMap arr
+    in fnEqual id (SM.unstream <<< SM.stream) sm
+
 main :: forall eff. Eff (console :: CONSOLE, testOutput :: TESTOUTPUT, random :: RANDOM | eff) Unit
 main = runTest do
     test "unstream <<< stream" do
@@ -36,3 +47,5 @@ main = runTest do
         quickCheck \(xs :: Array Int) ys -> xs <> ys === unstream (StreamOp.append (stream xs) (stream ys))
     test "length/take/repeat" do
         quickCheck $ let n = 100 in n === (StreamOp.length $ StreamOp.take n $ StreamOp.repeat unit)
+    test "StrMap unstream <<< stream" do
+        quickCheck unstreamStreamStrMap
