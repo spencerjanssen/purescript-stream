@@ -1,4 +1,4 @@
-module Data.Stream.Array where
+module Data.Stream.Array (unstream, stream) where
 
 import Data.Stream
 import Data.Array as Array
@@ -12,8 +12,7 @@ unstream :: forall a. Stream a -> Array a
 unstream s = runPure (runSTArray do
     res <- emptySTArray
     eachEff (void <<< pushSTArray res) s
-    pure res
-    )
+    pure res)
 
 stream :: forall a. Array a -> Stream a
 stream arr = Stream \comb -> comb next 0
