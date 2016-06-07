@@ -53,6 +53,14 @@ append (Stream comb1) (Stream comb2) = comb1 \next1 s1 -> comb2 \next2 s2 ->
             Done -> Done
     in Stream \f -> f next' (Left (Tuple s1 s2))
 
+foldl :: forall a b. (b -> a -> b) -> b -> Stream a -> b
+foldl f y0 (Stream comb) = comb \next s0 ->
+    let go y s = case next s of
+                    Yield x s' -> go (f y x) s'
+                    Skip s' -> go y s'
+                    Done -> y
+    in go y0 s0
+
 eachEff :: forall a eff. (a -> Eff eff Unit) -> Stream a -> Eff eff Unit
 eachEff f (Stream comb) = comb \next s0 ->
     let go s = case next s of
