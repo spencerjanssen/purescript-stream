@@ -1,4 +1,14 @@
-module Data.Stream.Operations where
+module Data.Stream.Operations
+    ( repeat
+    , eachEff
+    , zip
+    , foldl
+    , filter
+    , append
+    , length
+    , take
+    )
+    where
 
 import Data.Stream
 import Control.Monad.Eff (Eff)
@@ -69,3 +79,19 @@ eachEff f (Stream comb) = comb \next s0 ->
                 Skip s' -> go s'
                 Done -> pure unit
     in go s0
+
+data ZS l r a
+    = HaveL l r a
+    | NeedL l r
+
+zip :: forall a b. Stream a -> Stream b -> Stream (Tuple a b)
+zip (Stream xcomb) (Stream ycomb) = xcomb \xnext x0 -> ycomb \ynext y0 ->
+    let next (NeedL xs ys) = case xnext xs of
+                            Yield x xs' -> Skip (HaveL xs' ys x)
+                            Skip xs' -> Skip (NeedL xs' ys)
+                            Done -> Done
+        next (HaveL xs ys x) = case ynext ys of
+                            Yield y ys' -> Yield (Tuple x y) (NeedL xs ys')
+                            Skip ys' -> Skip (HaveL xs ys' x)
+                            Done -> Done
+    in Stream \f -> f next (NeedL x0 y0)
