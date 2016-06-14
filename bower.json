@@ -18,6 +18,7 @@
     "purescript-arrays": "^0.4.5",
     "purescript-quickcheck": "^0.12.2",
     "purescript-test-unit": "^6.0.1",
-    "purescript-maps": "^0.5.7"
+    "purescript-maps": "^0.5.7",
+    "purescript-benchotron": "^3.0.5"
   }
 }
